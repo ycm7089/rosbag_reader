@@ -54,18 +54,21 @@
   <build_depend>pcl_ros</build_depend>
   <build_depend>pcl_helper</build_depend>
   <build_depend>pcl_conversions</build_depend>
+  <build_depend>livox_ros_driver</build_depend>
 
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>pcl_helper</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>pcl_ros</build_export_depend>
-  <build_export_depend>pcl_conversions</build_export_depend>
+  <build_export_depend>pcl_conversions</build_export_depend>       
+  <build_export_depend>livox_ros_driver</build_export_depend>
 
   <exec_depend>rospy</exec_depend>
   <exec_depend>pcl_helper</exec_depend>
   <exec_depend>pcl_ros</exec_depend>
   <exec_depend>pcl_conversions</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>livox_ros_driver</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
