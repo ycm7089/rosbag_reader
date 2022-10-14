@@ -49,14 +49,14 @@ def read_bagfile():
         count = count + 1
         # print(len(msg))
 
-    for i in range(0,int(count/2)) :
+    for i in range(0,count) :
         # 0 ~ 2335  count is 2336
         if i >=1 :      
-            new_array = np.array([pc_array[2 * i-1], pc_array[2 * i]], dtype=np.float32)
+            new_array = np.array([pc_array[i-3], pc_array[i-2], pc_array[i-1], pc_array[i]], dtype=np.float32)
             print(new_array)
-        elif i == int(count)/2:
-            new_array = np.array([pc_array[2 * i-2], pc_array[2 * i-1]], dtype=np.float32)
-    print(int(count/2))
+        # elif i == int(count)/2:
+            # new_array = np.array([pc_array[2 * i-2], pc_array[2 * i-1]], dtype=np.float32)
+    # print(int(count/2))
     # for i in range(1,count) :
     #     new_array = np.array(pc_array)
     print(new_array)
