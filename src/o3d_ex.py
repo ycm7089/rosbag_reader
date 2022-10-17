@@ -30,7 +30,7 @@ def read_bagfile():
                 #print(pt_array)
                 
         if count == 315:
-            break;
+            break
                 
         #print(pc_array.shape)
         

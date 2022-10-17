@@ -13,6 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   pcl_conversions
   livox_ros_driver
+  roscpp
+  cv_bridge
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -107,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pcd_maker
- CATKIN_DEPENDS rospy std_msgs pcl_ros pcl_conversions
+ CATKIN_DEPENDS rospy std_msgs pcl_ros pcl_conversions roscpp sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -135,8 +138,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(bag_to_pcd src/bag_to_pcd.cpp)
-
+add_executable(bag_to_pcd_node src/bag_to_pcd.cpp)
+add_executable(bag_to_img_node src/bag_to_img.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -148,8 +151,11 @@ add_executable(bag_to_pcd src/bag_to_pcd.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(bag_to_pcd
+target_link_libraries(bag_to_pcd_node
   ${catkin_LIBRARIES}
+)
+target_link_libraries(bag_to_img_node
+  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
 )
 
 #############
@@ -206,3 +212,5 @@ target_link_libraries(bag_to_pcd
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+

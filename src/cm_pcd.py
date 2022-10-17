@@ -24,7 +24,8 @@ def eee():
     
 
 def read_bagfile():
-    bag = rosbag.Bag("/home/cm/livox_data.bag")
+    bag = rosbag.Bag("/home/kimm/livox_data_right.bag")
+    # livox_data_front rosbag data : 1305      livox_data_right rosbag data : 1349 
     count = 0
     new_array = np.empty((0,3))
     for topic, msg, t in bag.read_messages(topics=['/livox/lidar']):
@@ -36,31 +37,28 @@ def read_bagfile():
             pc_array = np.array([[msg.points[count].x,msg.points[count].y, msg.points[count].z]], dtype=np.float32)
         else :
             pc_array = np.append(pc_array, np.array([[msg.points[count].x, msg.points[count].y, msg.points[count].z]]), axis=0)
-            
-            
-        # if count <3 :
-        #     print(pc_array)
-        # if count >1 :
-           
-        # print(pc_array)
-        # print(pc)
-        # pcl.save(pc,"/home/kimm/pcd_data/"+ str(count) + ".pcd")
+
         
         count = count + 1
-        # print(len(msg))
-
-    for i in range(0,count) :
-        # 0 ~ 2335  count is 2336
+    print(count)
+    print(pc_array)
+    for i in range(0,int(count/10)) :
         if i >=1 :      
-            new_array = np.array([pc_array[i-3], pc_array[i-2], pc_array[i-1], pc_array[i]], dtype=np.float32)
+            new_array = np.array([pc_array[10*i-9], pc_array[10*i-8], pc_array[10*i-7], pc_array[10*i-6], pc_array[10*i-5],
+                                 pc_array[10*i-4], pc_array[10*i-3], pc_array[10*i-2], pc_array[10*i-1], pc_array[10*i]], dtype=np.float32)
             print(new_array)
+            pc = pcl.PointCloud(new_array)
+
+            pcl.save(pc,"/home/kimm/catkin_ws/src/rosbag_reader/pcd_data/"+ str(i) + ".pcd")
+
+        if i == count :
+            pass
         # elif i == int(count)/2:
             # new_array = np.array([pc_array[2 * i-2], pc_array[2 * i-1]], dtype=np.float32)
     # print(int(count/2))
     # for i in range(1,count) :
     #     new_array = np.array(pc_array)
-    print(new_array)
-    pc = pcl.PointCloud(new_array)
+    # print(new_array)
     print(pc)
     # pcl.save(pc, "11.pcd")
     # print(pc_array[0], pc_array[1])

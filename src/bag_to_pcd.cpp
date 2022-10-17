@@ -17,6 +17,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+    ros::init(argc, argv, "bag_to_pcd_node");
+
     cout << "Hello bag_to_pcd" << endl;
     rosbag::Bag bag;
     bag.open("/home/yshin/agricultural_ws/cm_livox_data.bag", rosbag::bagmode::Read);
