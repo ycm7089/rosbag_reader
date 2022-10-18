@@ -16,7 +16,7 @@ int main(int argc, char** argv)
     std::cout << "Read image from bag file" << std::endl;
     std::cout << "Please set image_topic_name and bagfile_name" << std::endl;
     std::string image_topic_name = "/camera/color/image_raw";
-    std::string bagfile_name = "/home/kimm/livox_front_data.bag";
+    std::string bagfile_name = "/home/kimm/calibration_data/rosbag/livox_kimm_data_1.bag";
     std::cout << "topic name: " << image_topic_name << std::endl;
     cv::Mat image;
     rosbag::Bag bag;
@@ -32,11 +32,13 @@ int main(int argc, char** argv)
             catch (cv_bridge::Exception& e) {
             ROS_ERROR("Image convert error");
             }
-            cv::circle(image, cv::Point(image.cols/ 2, image.rows/ 2), 10, cv::Scalar(255, 0, 255), 3);
+            // cv::circle(image, cv::Point(image.cols/ 2, image.rows/ 2), 10, cv::Scalar(255, 0, 255), 3);
+            
             cv::imshow("image", image);
             cv::waitKey(1);
             }
     }
+    cv::imwrite("/home/kimm/0.bmp",image);
     bag.close();
     return 0;
 }
