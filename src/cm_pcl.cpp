@@ -53,6 +53,8 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
     float cx = 326.296932;
     float cy = 244.054371;
 
+    cv::Mat img1(640, 480, CV_32FC3); // float 자료형 + 채널3개인 행렬
+
     // result1.block(0,0,3,4) = K_matrix * Extrinsic_matrix.block(0,0,3,4) ;
     // result2 =K_matrix * Extrinsic_matrix.block(0,0,3,4);
     
@@ -70,7 +72,7 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
         KE_Matrix(1,j) = fy * Extrinsic_matrix(1,j) + cy * Extrinsic_matrix(2,j);
         KE_Matrix(2,j) = Extrinsic_matrix(2,j);
     }
-
+    cout <<"==================================" << endl;
     for(int i = 0; i < data_num; i ++)
     {
         xyz_result[0] = KE_Matrix(0,0) * cloud.points[i].x +
@@ -87,10 +89,18 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
                        KE_Matrix(2,1) * cloud.points[i].y +
                        KE_Matrix(2,2) * cloud.points[i].z +
                        KE_Matrix(2,3) * 1;
-        
+
+        int u = int(xyz_result[0] / xyz_result[2]);
+        int v = int(xyz_result[1] / xyz_result[2]);
+        cout << u <<" " << v << endl;    
     }
-    cout << xyz_result.matrix() << endl; 
+    int w = 1;
+    // cout << xyz_result.matrix() << endl; 
     //calculate final matrix
+
+    
+    // img1.at<Vec3f>(0,0) = float(u);
+    // cout << img1.rows << " " << img1.cols << " " << img1.at<Vec3f>(0,0) << endl;
 
     // cout << KE_Matrix.matrix() << endl;
     cout << "" << endl;
