@@ -7,6 +7,8 @@
 #include <ros/ros.h>
 
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/PointCloud2.h>
+
 #include <livox_ros_driver/CustomMsg.h>
 
 #include <pcl_conversions/pcl_conversions.h>
@@ -19,23 +21,23 @@ using namespace std;
 typedef Eigen::Matrix<float, 3, 4> Matrix3x4;
 typedef Eigen::Matrix<float, 4, 1> Matrix4x1;
 
+ros::Subscriber topic_sub;
+ros::Publisher lidar_pub;
 
-void asdad()
+bool is_in_img(int u, int v)
 {
+    if ( 0 <= u && u <640 && 0 <= v && v <480)
 
+        return true;
+    else
+
+        return false;
 }
 
 void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy chamjoja
 {
-    // cout << cloud.points[2399].x << endl;
-    // realsense camera K matrix -> fx fy cx cy
-    
-    Eigen::Matrix3f K_matrix;
-
     Eigen::Matrix4f Extrinsic_matrix;
-    Eigen::Matrix4f result1;
 
-    Matrix3x4 result2;
     Matrix3x4 KE_Matrix;
 
     Matrix4x1 xyz_result;
@@ -43,9 +45,7 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
     KE_Matrix = Matrix3x4::Zero();
     xyz_result = Matrix4x1::Zero();
     xyz_result(3,0) = 1.0;
-    // xyz_result.ad
-    // cout << xyz_result.matrix() << endl;
-    // K_matrix << 601.654608, 0.000000, 326.296932, 0.000000, 603.568857, 244.054371, 0.000000, 0.000000, 1.000000; 
+
     Extrinsic_matrix << 0.0396624,-0.99725,-0.0626107,-0.406584,0.0162051,0.0632938,-0.997863,-0.00107753, 0.999082,0.0385631,0.0186709,-0.294709,0,0,0,1;
 
     float fx = 601.654608;
@@ -53,18 +53,12 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
     float cx = 326.296932;
     float cy = 244.054371;
 
-    cv::Mat img1(640, 480, CV_32FC3); // float 자료형 + 채널3개인 행렬
-
-    // result1.block(0,0,3,4) = K_matrix * Extrinsic_matrix.block(0,0,3,4) ;
-    // result2 =K_matrix * Extrinsic_matrix.block(0,0,3,4);
+    cv::Mat img1= cv::imread("/home/kimm/calibration_data/data/calib/image/old/0.bmp", cv::IMREAD_COLOR);
     
-    // cout << result1(0,0) << " " << result1(1,0) << " " <<result1(2,0) << endl;
-    // cout << Extrinsic_matrix(0,0) << " " << Extrinsic_matrix(1,0) << " " <<Extrinsic_matrix(2,0) << " "<< Extrinsic_matrix(3,0) << endl;
-
-    // Eigen::Affine3f transform_1 = Eigen::Affine3f::Identity();
-    // cout << transform_1.matrix() << endl;
-    // Eigen::Affine3f transform_1(Extrinsic_matrix);
-
+    pcl::PointXYZRGB point_rgb;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr output_cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
+    
+    sensor_msgs::PointCloud2 cloud_out;
 
     for(int j = 0; j <4; j++)
     {
@@ -72,7 +66,9 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
         KE_Matrix(1,j) = fy * Extrinsic_matrix(1,j) + cy * Extrinsic_matrix(2,j);
         KE_Matrix(2,j) = Extrinsic_matrix(2,j);
     }
+
     cout <<"==================================" << endl;
+
     for(int i = 0; i < data_num; i ++)
     {
         xyz_result[0] = KE_Matrix(0,0) * cloud.points[i].x +
@@ -92,36 +88,51 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
 
         int u = int(xyz_result[0] / xyz_result[2]);
         int v = int(xyz_result[1] / xyz_result[2]);
-        cout << u <<" " << v << endl;    
+        int w = 1;
+
+        if (is_in_img(u, v))
+        {
+            cout << u << " " << v << endl;
+
+            point_rgb.x = cloud.points[i].x;
+            point_rgb.y = cloud.points[i].y;
+            point_rgb.z = cloud.points[i].z;
+
+            cv::Vec3b rgb_val = img1.at<cv::Vec3b>(v,u);
+            
+            // extract lidar pointcloud in image
+            // cv::Vec3b tmp_val(0, 0, 0);
+            // img1.at<cv::Vec3b>(v,u) = tmp_val;
+
+            point_rgb.r = rgb_val(0);
+            point_rgb.g = rgb_val(1);
+            point_rgb.b = rgb_val(2);
+
+            output_cloud -> points.push_back(point_rgb);
+
+            cout << point_rgb << endl;
+        }
     }
-    int w = 1;
-    // cout << xyz_result.matrix() << endl; 
-    //calculate final matrix
 
+    pcl::toROSMsg(*output_cloud, cloud_out);
     
-    // img1.at<Vec3f>(0,0) = float(u);
-    // cout << img1.rows << " " << img1.cols << " " << img1.at<Vec3f>(0,0) << endl;
+    cloud_out.header.frame_id = "map";
+    cloud_out.header.stamp = ros::Time::now();
+        
+    cv::namedWindow("test");
+    cv::imshow("test", img1);
+    cv::waitKey(1);
 
-    // cout << KE_Matrix.matrix() << endl;
-    cout << "" << endl;
-    // cout << result1.matrix() << endl;
-    // Eigen::Matrix3d res =  K_matrix * transform_1;
-    // cout << "" << endl;
-    // cout << K_matrix.matrix() << endl;
-    // cout << "" << endl;
-    // cout << transform_1.matrix() << endl;
-
-    // cout << transform_1.translation().matrix() << endl;
-    // cout << transform_1.rotation().matrix() << endl;
-    
+    lidar_pub.publish(cloud_out);   
 }
+
 void topiccb(const livox_ros_driver::CustomMsg::ConstPtr& msg)
 {
 
     ROS_INFO("=============");
     pcl::PointCloud<pcl::PointXYZ> cloud;
     pcl::PointXYZ point_xyz;
-    // ROS_INFO("num %d", msg->point_num);  //2400
+
     int data_num = msg -> point_num;
     for (int i = 0; i < msg->point_num; i++)
     {
@@ -134,15 +145,14 @@ void topiccb(const livox_ros_driver::CustomMsg::ConstPtr& msg)
     cloud.clear();
 }
 
-
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "pcl_node");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
-    ros::Subscriber topic_sub;
+    lidar_pub = nh.advertise<sensor_msgs::PointCloud2>("xyzrgb",1);
     topic_sub = nh.subscribe("/livox/lidar", 1000, topiccb);
-
+        
     ros::spin();
     return 0;
 }
