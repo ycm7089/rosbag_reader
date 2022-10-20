@@ -1,20 +1,16 @@
-#include <cv_bridge/cv_bridge.h>
+// #include <cv_bridge/cv_bridge.h>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
 
-#include <sensor_msgs/Image.h>
+#include <opencv2/highgui/highgui.hpp>
+
 #include <sensor_msgs/PointCloud2.h>
 
 #include <livox_ros_driver/CustomMsg.h>
 
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_types.h>
-#include <pcl/PCLPointCloud2.h>
-#include <pcl/conversions.h>
 
 using namespace std;
 
@@ -72,19 +68,19 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
     for(int i = 0; i < data_num; i ++)
     {
         xyz_result[0] = KE_Matrix(0,0) * cloud.points[i].x +
-                       KE_Matrix(0,1) * cloud.points[i].y +
-                       KE_Matrix(0,2) * cloud.points[i].z +
-                       KE_Matrix(0,3) * 1;
+                        KE_Matrix(0,1) * cloud.points[i].y +
+                        KE_Matrix(0,2) * cloud.points[i].z +
+                        KE_Matrix(0,3) * 1;
 
         xyz_result[1] = KE_Matrix(1,0) * cloud.points[i].x +
-                       KE_Matrix(1,1) * cloud.points[i].y +
-                       KE_Matrix(1,2) * cloud.points[i].z +
-                       KE_Matrix(1,3) * 1;
+                        KE_Matrix(1,1) * cloud.points[i].y +
+                        KE_Matrix(1,2) * cloud.points[i].z +
+                        KE_Matrix(1,3) * 1;
 
         xyz_result[2] = KE_Matrix(2,0) * cloud.points[i].x +
-                       KE_Matrix(2,1) * cloud.points[i].y +
-                       KE_Matrix(2,2) * cloud.points[i].z +
-                       KE_Matrix(2,3) * 1;
+                        KE_Matrix(2,1) * cloud.points[i].y +
+                        KE_Matrix(2,2) * cloud.points[i].z +
+                        KE_Matrix(2,3) * 1;
 
         int u = int(xyz_result[0] / xyz_result[2]);
         int v = int(xyz_result[1] / xyz_result[2]);
@@ -92,8 +88,6 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
 
         if (is_in_img(u, v))
         {
-            cout << u << " " << v << endl;
-
             point_rgb.x = cloud.points[i].x;
             point_rgb.y = cloud.points[i].y;
             point_rgb.z = cloud.points[i].z;
@@ -109,8 +103,6 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
             point_rgb.b = rgb_val(2);
 
             output_cloud -> points.push_back(point_rgb);
-
-            cout << point_rgb << endl;
         }
     }
 
@@ -128,31 +120,35 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZ>& cloud, int data_num) // & no copy
 
 void topiccb(const livox_ros_driver::CustomMsg::ConstPtr& msg)
 {
-
-    ROS_INFO("=============");
     pcl::PointCloud<pcl::PointXYZ> cloud;
     pcl::PointXYZ point_xyz;
 
     int data_num = msg -> point_num;
+
     for (int i = 0; i < msg->point_num; i++)
     {
         point_xyz.x = msg->points[i].x;
         point_xyz.y = msg->points[i].y;
         point_xyz.z = msg->points[i].z;
+
         cloud.push_back(point_xyz);
     }
+
     cm_matrix(cloud, data_num);
+
     cloud.clear();
 }
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "pcl_node");
+
     ros::NodeHandle nh("~");
 
     lidar_pub = nh.advertise<sensor_msgs::PointCloud2>("xyzrgb",1);
     topic_sub = nh.subscribe("/livox/lidar", 1000, topiccb);
         
     ros::spin();
+
     return 0;
 }
