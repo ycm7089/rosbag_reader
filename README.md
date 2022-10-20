@@ -1,7 +1,7 @@
 Livox & Realsense camera calibration by Chanmin 2022-10-18 作
 
 0. git clone https://github.com/hku-mars/livox_camera_calib.git  --> hku_git
-   git clone https://github.com/Livox-SDK/livox_ca-mera_lidar_calibration.git --> livox_git-
+   git clone https://github.com/Livox-SDK/livox_ca-mera_lidar_calibration.git --> livox_git
    git clone git@github.com:ycm7089/rosbag_reader.git --> 내 깃허브
 
 1. roslaunch realsense2_camera rs_camera.launch
