@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     std::cout << "Read image from bag file" << std::endl;
     std::cout << "Please set image_topic_name and bagfile_name" << std::endl;
     std::string image_topic_name = "/camera/color/image_raw";
-    std::string bagfile_name = "/home/cm/rosbag_file/no_light.bag";
+    std::string bagfile_name = "/home/cm/rosbag_file/all_light_on.bag";
     std::cout << "topic name: " << image_topic_name << std::endl;
     cv::Mat image;
     rosbag::Bag bag;
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
             // cv::imwrite(output, image);
 
-            sprintf(buf,"/home/cm/rosbag_file/image/%d.bmp",count);       
+            sprintf(buf,"/home/cm/rosbag_file/all_light_image/%d.bmp",count);       
             cv::imwrite(buf,image);
             count = count + 1;
 
