@@ -9,18 +9,24 @@
 #include <rosbag/view.h>
 #include <sensor_msgs/Image.h>
 
+using namespace std;
+
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "bag_to_img_node");
+    
+    char buf[256];
 
     std::cout << "Read image from bag file" << std::endl;
     std::cout << "Please set image_topic_name and bagfile_name" << std::endl;
     std::string image_topic_name = "/camera/color/image_raw";
-    std::string bagfile_name = "/home/kimm/calibration_data/rosbag/livox_kimm_data_1.bag";
+    std::string bagfile_name = "/home/cm/rosbag_file/no_light.bag";
     std::cout << "topic name: " << image_topic_name << std::endl;
     cv::Mat image;
     rosbag::Bag bag;
     bag.open(bagfile_name);
+    int count = 0;
     for (rosbag::MessageInstance const m : rosbag::View(bag)) {
         // fetch image topic name
         std::string imgTopic = m.getTopic();
@@ -36,9 +42,20 @@ int main(int argc, char** argv)
             
             cv::imshow("image", image);
             cv::waitKey(1);
+            // string output_path = "/home/cm/rosbag_file/image/";
+            // stringstream counting;
+            // counting << "img_" << count;
+            // string output = output_path + counting + ".bmp";
+
+            // cv::imwrite(output, image);
+
+            sprintf(buf,"/home/cm/rosbag_file/image/%d.bmp",count);       
+            cv::imwrite(buf,image);
+            count = count + 1;
+
+     
             }
     }
-    cv::imwrite("/home/kimm/0.bmp",image);
     bag.close();
     return 0;
 }
