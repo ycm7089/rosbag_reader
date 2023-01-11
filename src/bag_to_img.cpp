@@ -2,12 +2,22 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include<pcl/io/pcd_io.h>
+#include<pcl/point_types.h>
+
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
 #include <ros/ros.h>
 #include <rosbag/bag.h>
 #include <rosbag/view.h>
+
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <chrono>
+#include <time.h>
 
 using namespace std;
 
@@ -18,22 +28,49 @@ int main(int argc, char** argv)
     
     char buf[256];
 
-    std::cout << "Read image from bag file" << std::endl;
-    std::cout << "Please set image_topic_name and bagfile_name" << std::endl;
-    std::string image_topic_name = "/camera/color/image_raw";
-    std::string bagfile_name = "/home/cm/rosbag_file/all_light_on.bag";
-    std::cout << "topic name: " << image_topic_name << std::endl;
-    cv::Mat image;
+    auto start = std::chrono::system_clock::now();
+
+    cout << "Read image from bag file" << endl;
+    cout << "Please set image_topic_name and bagfile_name" << endl;
+
+    string image_topic_name = "/camera/color/image_raw";
+    string pcl_topic_name = "/velodyne_points";
+
+    string bagfile_name = "/home/cm/rosbag_file/no_light.bag";
+    cout << "topic name: " << image_topic_name << " , " << pcl_topic_name << endl;
+
+    cv::Mat image;    
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+    
+    // if (pcl::io::loadPCDFile<pcl::PointXYZ> ("/home/cm/rosbag_file/output_pcd/no_light/no_light.pcd", *cloud) == -1) //* load the file
+    // {
+    //     PCL_ERROR ("Couldn't read file test_pcd.pcd \n");
+    //     return (-1);
+    // }
+    // std::cout << "Loaded " << cloud->width * cloud->height << " data points from test_pcd.pcd with the following fields: " << std::endl;
+    // for (const auto& point: *cloud)
+    //     std::cout << "    " << point.x
+    //             << " "    << point.y
+    //             << " "    << point.z << std::endl;
+
     rosbag::Bag bag;
     bag.open(bagfile_name);
     int count = 0;
+
     for (rosbag::MessageInstance const m : rosbag::View(bag)) {
         // fetch image topic name
-        std::string imgTopic = m.getTopic();
-        if (image_topic_name == imgTopic) {
+        
+        auto middle_time = std::chrono::system_clock::now();
+     
+        std::chrono::duration<double> elapsed_seconds = middle_time - start;
+
+        std::string rosbag_topic = m.getTopic();
+        if (image_topic_name == rosbag_topic) {
             try {
             sensor_msgs::ImageConstPtr imgMsgPtr = m.instantiate<sensor_msgs::Image>();
             image = cv_bridge::toCvCopy(imgMsgPtr)->image;
+
+
             } 
             catch (cv_bridge::Exception& e) {
             ROS_ERROR("Image convert error");
@@ -42,19 +79,20 @@ int main(int argc, char** argv)
             
             cv::imshow("image", image);
             cv::waitKey(1);
-            // string output_path = "/home/cm/rosbag_file/image/";
-            // stringstream counting;
-            // counting << "img_" << count;
-            // string output = output_path + counting + ".bmp";
 
-            // cv::imwrite(output, image);
+            // if (elapsed_seconds.count() > 0.0005){
+            //     cout << "WOW!" << endl;
+            //     break;
+            // }
 
-            sprintf(buf,"/home/cm/rosbag_file/all_light_image/%d.bmp",count);       
+            sprintf(buf,"/home/cm/rosbag_file/new/%d.png",count);       
             cv::imwrite(buf,image);
             count = count + 1;
-
      
             }
+
+        std::cout << "Elapsed Time: " << elapsed_seconds.count() << " sec" << std::endl;
+
     }
     bag.close();
     return 0;

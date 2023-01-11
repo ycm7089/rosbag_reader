@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   cv_bridge
   sensor_msgs
+  # pcl_helper
 )
 
 ## System dependencies are found with CMake's conventions
