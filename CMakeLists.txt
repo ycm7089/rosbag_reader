@@ -16,8 +16,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   cv_bridge
   sensor_msgs
+  tf
+  tf_conversions
+  nav_msgs
   # pcl_helper
 )
+
+find_package(pcl_visualization)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -111,7 +116,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pcd_maker
- CATKIN_DEPENDS rospy std_msgs pcl_ros pcl_conversions roscpp sensor_msgs
+ CATKIN_DEPENDS rospy std_msgs pcl_ros pcl_conversions roscpp sensor_msgs tf nav_msgs
 #  DEPENDS system_lib
 )
 
@@ -142,6 +147,8 @@ include_directories(
 add_executable(bag_to_pcd_node src/bag_to_pcd.cpp)
 add_executable(bag_to_img_node src/bag_to_img.cpp)
 add_executable(pcl_node src/cm_pcl.cpp)
+add_executable(real_time_node src/real_time.cpp)
+add_executable(tf_pub_node src/tf_pub.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -160,8 +167,16 @@ target_link_libraries(bag_to_pcd_node
 target_link_libraries(bag_to_img_node
   ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
 )
+target_link_libraries(tf_pub_node
+  ${catkin_LIBRARIES}
+)
+
 target_link_libraries(pcl_node
   ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
+)
+
+target_link_libraries(real_time_node
+  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES} pcl_visualization
 )
 
 #############
