@@ -78,7 +78,20 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
     xyz_result = Matrix4x1::Zero();
     xyz_result(3,0) = 1.0;
 
-    Extrinsic_matrix << 0.0346, -0.9933 ,-0.1102,0.1134, 0.0773,0.1126,-0.9906,-0.5178, 0.9964, 0.0257, 0.0807, -0.0737,0,0,0,1;
+    // Extrinsic_matrix << 0.0346, -0.9933, -0.1102, 0.1134,
+    //                     0.0773,  0.1126, -0.9906,-0.5178,
+    //                     0.9964, 0.0257, 0.0807, -0.0737,
+    //                     0,0,0,1;
+
+    Extrinsic_matrix << 0.0, -1.0, 0.0, 0.1284,
+                        0.0,  0.0,-1.0, -0.063,
+                        1.0,  0.0, 0.0, -0.055,
+                        0,0,0,1;
+
+    // Extrinsic_matrix << 0.0346, -0.9933, -0.1102, 0.04,
+    //                     0.0773,  0.1126, -0.9906,-0.118,
+    //                     0.9964, 0.0257, 0.0807, -0.055,
+    //                     0,0,0,1;
 
     float fx = 603.5733;
     float fy = 603.8386;
@@ -99,8 +112,13 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
 
     cout <<"==================================" << endl;
 
+    cv::Mat tmp;
+    img.copyTo(tmp);
+
     for(int i = 0; i < data_num; i ++)
     {
+        if (cloud.points[i].x < 0.25)   continue; 
+
         xyz_result[0] = KE_Matrix(0,0) * cloud.points[i].x +
                         KE_Matrix(0,1) * cloud.points[i].y +
                         KE_Matrix(0,2) * cloud.points[i].z +
@@ -124,21 +142,42 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
         {
             point_rgb.x = cloud.points[i].x;
             point_rgb.y = cloud.points[i].y;
+
+            // cout << cloud.points[i].z << endl;
+            
+            // double slope = atan2( sqrt( pow(cloud.points[i].x,2)+ pow(cloud.points[i].y,2)), cloud.points[i].z) * 180 / M_PI;
+            // cout << "slope_x is "<< slope_x << " slope y is " << slope_y << " estimated_slope is " << slope << endl;
+            // cout << " estimated_slope is " << slope << endl;
+            // if (slope < 60)
+            // {
             point_rgb.z = cloud.points[i].z;
+            // }
+            // if (cloud.points[i].z < 0)
+            // {
+            //     point_rgb.z = cloud.points[i].z;
+            // }
 
             cv::Vec3b rgb_val = img.at<cv::Vec3b>(v,u);
+            tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(255, 0, 0);
 
-            point_rgb.r = rgb_val(0);
+            // rgb_val is BGR
+            point_rgb.r = rgb_val(2);
             point_rgb.g = rgb_val(1);
-            point_rgb.b = rgb_val(2);
+            point_rgb.b = rgb_val(0);
 
             output_cloud -> points.push_back(point_rgb);
         }
     }
 
+    cv::namedWindow("tmp");
+    cv::imshow("tmp", tmp);
+    cv::waitKey(1);
+
     pcl::toROSMsg(*output_cloud, cloud_out);
     
-    cloud_out.header.frame_id = "base_link";
+    cloud_out.header.frame_id = "velodyne";
+    // for colorize loam 
+    // cloud_out.header.frame_id = "aft_mapped";
     cloud_out.header.stamp = ros::Time::now();
         
     // cv::namedWindow("test");
@@ -147,7 +186,9 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
 
     // tf_pub(robot_odom);
 
-    lidar_pub.publish(cloud_out);   
+    lidar_pub.publish(cloud_out);  
+    output_cloud -> clear(); 
+    cloud_out.data.clear();
 }
 
 void image_cb(const sensor_msgs::Image::ConstPtr& msg)
@@ -224,7 +265,10 @@ int main(int argc, char** argv)
 
     lidar_pub = nh.advertise<sensor_msgs::PointCloud2>("xyzrgb",1);
 
-    camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
+    // camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
+    
+    // For jetson
+    camera_sub = nh.subscribe("/cm_segmentation", 1000, image_cb);
     // odom_sub = nh.subscribe("/odom", 1000, odom_cb);
     lidar_sub = nh.subscribe("/velodyne_points", 1000, lidar_cb);
     
