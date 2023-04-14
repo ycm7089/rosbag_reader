@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 import rospy
@@ -36,7 +35,11 @@ class TF_pub:
         print("tfpub",self.odom_pose)
         self.br.sendTransform((self.odom_pose.x, self.odom_pose.y, 0), tf.transformations.quaternion_from_euler(0, 0.0, self.yaw), rospy.Time.now(), "base_link", "map")
         # self.br.sendTransform((0.0, 0.0, 0), tf.transformations.quaternion_from_euler(0, 0.0, 0), rospy.Time.now(), "base_link", "odom")
+<<<<<<< HEAD
         self.br.sendTransform((0.0, 0.0, 0.82), tf.transformations.quaternion_from_euler(0, 0.0, 0), rospy.Time.now(), "velodyne", "base_link")
+=======
+        self.br.sendTransform((0.0, 0.0, 0.82), tf.transformations.quaternion_from_euler(0, 0.0, 0), rospy.Time.now(), " ", "base_link")
+>>>>>>> aa8f0776e0cb8367f3adddf3ac12bcbd0253edce
         self.br.sendTransform((0.0, 0.0, 0.72), tf.transformations.quaternion_from_euler(-math.pi/2, 0.0 ,-math.pi/2), rospy.Time.now(), "camera_link", "base_link")
     # br.sendTransform((0.0, 0.0, 0.72), tf.transformations.quaternion_from_euler(0.0, 0), rospy.Time.now(), "safe_link", "marker")
 
