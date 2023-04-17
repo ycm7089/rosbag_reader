@@ -94,7 +94,6 @@ int main(int argc, char** argv)
         cv::Mat image = cv::imread("/home/cm/pcd_img_data/seg_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
         // cout << image.
         fscanf(file,"%f %f %f %f %f %f %f", &pose_x, &pose_y, &pose_z, &orien_x, &orien_y, &orien_z, &orien_w);
-        // cout << pose_x << " " << pose_y << " " << pose_z << " " << orien_x << " " << orien_y<< " " << orien_z << " " <<orien_w << "\n" << endl;
         
         odom.pose.pose.position.x = pose_x;
         odom.pose.pose.position.y = pose_y;
@@ -119,19 +118,13 @@ int main(int argc, char** argv)
         double roll, pitch, yaw;
         // m.getRPY(roll,pitch,yaw);
         ms.getRPY(roll,pitch,yaw);
-
-        // transform.setOrigin( tf::Vector3(0.0,0.0, 0.0) );
-        // transform.setRotation(tf::createQuaternionFromRPY(0.0, 0.0,0.0));    
-        // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "odom"));
         
         tf::Transform transform;
 
-        // transform.setOrigin( tf::Vector3(odom.pose.pose.position.x,odom.pose.pose.position.y, odom.pose.pose.position.z) );
         transform.setOrigin( tf::Vector3(pose_x,pose_y, pose_z) );
         transform.setRotation(tf::createQuaternionFromRPY(roll, pitch, yaw));
         br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "velodyne"));
         
-
         transform.setOrigin( tf::Vector3(0.0, 0.0, -0.82) );
         transform.setRotation(tf::createQuaternionFromRPY(0.0, 0.0,0.0));
         br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "velodyne", "base_link"));
@@ -211,4 +204,7 @@ int main(int argc, char** argv)
         cloud_out.data.clear();
         std::cout << i << "th publish complete" << std::endl;
     }
+    ros::spinOnce();
+
+    return 0;
 }

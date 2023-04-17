@@ -129,10 +129,7 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
             cv::Vec3b rgb_val = img.at<cv::Vec3b>(v,u);
             tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(255, 0, 0);
 
-<<<<<<< HEAD
-            // rgb_val is BGR
-=======
->>>>>>> aa8f0776e0cb8367f3adddf3ac12bcbd0253edce
+
             point_rgb.r = rgb_val(2);
             point_rgb.g = rgb_val(1);
             point_rgb.b = rgb_val(0);
@@ -148,26 +145,19 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
     pcl::toROSMsg(*output_cloud, cloud_out);
     
     cloud_out.header.frame_id = "velodyne";
-<<<<<<< HEAD
-    // for colorize loam 
-    // cloud_out.header.frame_id = "aft_mapped";
-=======
->>>>>>> aa8f0776e0cb8367f3adddf3ac12bcbd0253edce
+
     cloud_out.header.stamp = ros::Time::now();
         
     // cv::namedWindow("test");
     // cv::imshow("test", img);
     // cv::waitKey(1);
 
-<<<<<<< HEAD
     // tf_pub(robot_odom);
 
     lidar_pub.publish(cloud_out);  
     output_cloud -> clear(); 
     cloud_out.data.clear();
-=======
     lidar_pub.publish(cloud_out);   
->>>>>>> aa8f0776e0cb8367f3adddf3ac12bcbd0253edce
 }
 
 void image_cb(const sensor_msgs::Image::ConstPtr& msg)
@@ -204,15 +194,12 @@ int main(int argc, char** argv)
 
     lidar_pub = nh.advertise<sensor_msgs::PointCloud2>("xyzrgb",1);
 
-<<<<<<< HEAD
     // camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
     
     // For jetson
     camera_sub = nh.subscribe("/cm_segmentation", 1000, image_cb);
     // odom_sub = nh.subscribe("/odom", 1000, odom_cb);
-=======
     camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
->>>>>>> aa8f0776e0cb8367f3adddf3ac12bcbd0253edce
     lidar_sub = nh.subscribe("/velodyne_points", 1000, lidar_cb);
     
     ros::spin();
