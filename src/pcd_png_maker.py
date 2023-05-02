@@ -21,12 +21,12 @@ class Convert:
         self.robot_odom = Odometry()
         # self.lidar_points = PointCloud2()
         
-        self.lidar_sub  = rospy.Subscriber("/velodyne_points",PointCloud2,self.lidar_cb)
+        # self.lidar_sub  = rospy.Subscriber("/velodyne_points",PointCloud2,self.lidar_cb)
         # self.seg_camera_sub  = rospy.Subscriber("/cm_segmentation",Image,self.seg_camera_cb)
         # self.odom_sub = rospy.Subscriber("/odom",Odometry, self.odom_cb) # odom is odom to base_link
         self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
 
-        self.f = open("/home/kimm/pcd_img_data/txt/0413_txt.txt", 'w')
+        # self.f = open("/home/kimm/pcd_img_data/txt/0413_txt.txt", 'w')
         self.listener = tf.TransformListener()
         self.cnt = 0
         self.seg_cnt = 0
@@ -109,13 +109,28 @@ class Convert:
         print("pcd, img, txt %dth saved"%self.cnt)
 
     def color_camera_cb(self, msg):
-        print("camera cb start")
+        # print("camera cb start")
         self.color_cv2_img = self.cv_br.imgmsg_to_cv2(msg,desired_encoding="bgr8")
-        cv2.imwrite("/home/kimm/pcd_img_data/rgb_img/%s.png"% str(rospy.get_rostime()), self.color_cv2_img)
+        # cv2.imwrite("/home/kimm/pcd_img_data/rgb_img/%s.png"% str(rospy.get_rostime()), self.color_cv2_img)
 
         
-        # cv2.imshow("s",self.cv2_img)
-        # cv2.waitKey(1)
+        cv2.imshow("s",self.color_cv2_img)
+        cv2.waitKey(1)
+
+
+    def aa(self):
+
+        self.a = input() 
+        print("in")
+        for i in range(5000):
+            if self.a == "" :
+                print("in2")
+                cv2.imwrite("/home/kimm/pcd_img_data/cm_pic/%d.png"% self.cnt, self.color_cv2_img)
+                self.cnt +=1
+
+
+        
+        
     
     # def simultaneously_convert(self):
 
@@ -140,7 +155,8 @@ def main():
     rospy.init_node("convert_node")
 
     test = Convert()
-    # test.simultaneously_convert()
+    
+    test.aa()
     
     rospy.spin()
 

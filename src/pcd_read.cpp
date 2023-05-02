@@ -82,16 +82,16 @@ int main(int argc, char** argv)
     int num_pcd = 5667;
 
     FILE* file;
-    file = fopen("/home/cm/pcd_img_data/txt/re_0413_txt.txt","r");
+    file = fopen("/home/kimm/pcd_img_data/txt/re_0413_txt.txt","r");
     
     string rostime;
     float pose_x,pose_y,pose_z,orien_x,orien_y,orien_z,orien_w;
     
     for(int i = 0; i < num_pcd; i ++)
     {
-        pcl::io::loadPCDFile<pcl::PointXYZRGB> ("/home/cm/pcd_img_data/resaved_pcd/" + std::to_string(i) + ".pcd", cloud); //* load the file
-        // cv::Mat image = cv::imread("/home/cm/pcd_img_data/resaved_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
-        cv::Mat image = cv::imread("/home/cm/pcd_img_data/seg_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
+        pcl::io::loadPCDFile<pcl::PointXYZRGB> ("/home/kimm/pcd_img_data/resaved_pcd/" + std::to_string(i) + ".pcd", cloud); //* load the file
+        // cv::Mat image = cv::imread("/home/kimm/pcd_img_data/resaved_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
+        cv::Mat image = cv::imread("/home/kimm/pcd_img_data/seg_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
         // cout << image.
         fscanf(file,"%f %f %f %f %f %f %f", &pose_x, &pose_y, &pose_z, &orien_x, &orien_y, &orien_z, &orien_w);
         
@@ -111,10 +111,10 @@ int main(int argc, char** argv)
         odom.pose.pose.orientation.z   
         );
 
-        tf::Quaternion cm_q(orien_x, orien_y, orien_z, orien_w);
+        tf::Quaternion kimm_q(orien_x, orien_y, orien_z, orien_w);
 
         // tf::Matrix3x3 m(q);
-        tf::Matrix3x3 ms(cm_q);
+        tf::Matrix3x3 ms(kimm_q);
         double roll, pitch, yaw;
         // m.getRPY(roll,pitch,yaw);
         ms.getRPY(roll,pitch,yaw);
