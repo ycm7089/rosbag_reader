@@ -20,7 +20,7 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "pcd_read_node");
+    ros::init(argc, argv, "loam_pcd_read_node");
     ros::NodeHandle nh ("~");
 
     ros::Publisher PointCloud_pub = nh.advertise<sensor_msgs::PointCloud2>("pcd_pub",1);

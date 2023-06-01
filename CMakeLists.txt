@@ -152,6 +152,7 @@ add_executable(tf_pub_node src/tf_pub.cpp)
 add_executable(pcd_read_node src/pcd_read.cpp)
 add_executable(pcd_txt_png_read_node src/pcd_txt_png_read.cpp)
 add_executable(loam_pcd_read_node src/legoloam_pcd_read.cpp)
+add_executable(cm_gicp_node src/cm_gicp_example.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -191,6 +192,10 @@ target_link_libraries(pcd_read_node
 )
 
 target_link_libraries(loam_pcd_read_node
+  ${catkin_LIBRARIES} ${PCL_LIBRARIES}
+)
+
+target_link_libraries(cm_gicp_node
   ${catkin_LIBRARIES} ${PCL_LIBRARIES}
 )
 
