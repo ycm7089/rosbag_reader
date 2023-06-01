@@ -91,8 +91,9 @@ int main(int argc, char** argv)
     {
         pcl::io::loadPCDFile<pcl::PointXYZRGB> ("/home/kimm/pcd_img_data/resaved_pcd/" + std::to_string(i) + ".pcd", cloud); //* load the file
         // cv::Mat image = cv::imread("/home/kimm/pcd_img_data/resaved_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
+        
         cv::Mat image = cv::imread("/home/kimm/pcd_img_data/seg_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
-        // cout << image.
+
         fscanf(file,"%f %f %f %f %f %f %f", &pose_x, &pose_y, &pose_z, &orien_x, &orien_y, &orien_z, &orien_w);
         
         odom.pose.pose.position.x = pose_x;

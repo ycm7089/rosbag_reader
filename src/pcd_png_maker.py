@@ -22,10 +22,19 @@ class Convert:
         # self.lidar_points = PointCloud2()
         
         # self.lidar_sub  = rospy.Subscriber("/velodyne_points",PointCloud2,self.lidar_cb)
-        # self.seg_camera_sub  = rospy.Subscriber("/cm_segmentation",Image,self.seg_camera_cb)
-        # self.odom_sub = rospy.Subscriber("/odom",Odometry, self.odom_cb) # odom is odom to base_link
-        self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
 
+        ## LeGo-loam
+        self.lidar_sub  = rospy.Subscriber("/filtered_pointcloud",PointCloud2,self.lidar_cb)
+
+        # Segmentation Information
+        # self.seg_camera_sub  = rospy.Subscriber("/cm_segmentation",Image,self.seg_camera_cb)
+        
+        # self.odom_sub = rospy.Subscriber("/odom",Odometry, self.odom_cb) # odom is odom to base_link
+
+        # RGB camera Information
+        # self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
+
+        # robot_pose txt
         # self.f = open("/home/kimm/pcd_img_data/txt/0413_txt.txt", 'w')
         self.listener = tf.TransformListener()
         self.cnt = 0
@@ -49,31 +58,36 @@ class Convert:
         # print(self.robot_odom)
 
     def lidar_cb(self, msg):
-
+        print("1")
         self.lidar_points = pcl_helper.ros_to_pcl(msg)
         # print(rospy.get_rostime().secs, rospy.get_rostime().nsecs)
         # print(rospy.get_rostime())
-        pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/pcd/%s.pcd"% str(rospy.get_rostime()))
 
-        trans, rot = self.listener.lookupTransform('/map','/velodyne',rospy.Time(0))
+        # pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/pcd/%s.pcd"% str(rospy.get_rostime()))\
+        pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/0502_trav_pcd/%d.pcd"% self.cnt)
+        print("2")
+        self.cnt+=1
+
+        ## robot_pose txt 
+        # trans, rot = self.listener.lookupTransform('/map','/velodyne',rospy.Time(0))
         
         # print (trans[0], rot)
-        self.f.write(str(rospy.get_rostime()))
-        self.f.write(" ")
-        self.f.write(f'{trans[0]:0.10f}')
-        self.f.write(" ")
-        self.f.write(f'{trans[1]:0.10f}')
-        self.f.write(" ")
-        self.f.write(f'{trans[2]:0.10f}')
-        self.f.write(" ")
-        self.f.write(f'{rot[0]:0.10f}')
-        self.f.write(" ")
-        self.f.write(f'{rot[1]:0.10f}')
-        self.f.write(" ")
-        self.f.write(f'{rot[2]:0.10f}')
-        self.f.write(" ")
-        self.f.write(f'{rot[3]:0.10f}')
-        self.f.write("\n")
+        # self.f.write(str(rospy.get_rostime()))
+        # self.f.write(" ")
+        # self.f.write(f'{trans[0]:0.10f}')
+        # self.f.write(" ")
+        # self.f.write(f'{trans[1]:0.10f}')
+        # self.f.write(" ")
+        # self.f.write(f'{trans[2]:0.10f}')
+        # self.f.write(" ")
+        # self.f.write(f'{rot[0]:0.10f}')
+        # self.f.write(" ")
+        # self.f.write(f'{rot[1]:0.10f}')
+        # self.f.write(" ")
+        # self.f.write(f'{rot[2]:0.10f}')
+        # self.f.write(" ")
+        # self.f.write(f'{rot[3]:0.10f}')
+        # self.f.write("\n")
 
         # print("lidar points is : ", self.lidar_points)
         
@@ -156,7 +170,7 @@ def main():
 
     test = Convert()
     
-    test.aa()
+    # test.aa()
     
     rospy.spin()
 
