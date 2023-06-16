@@ -24,7 +24,7 @@ class Convert:
         # self.lidar_sub  = rospy.Subscriber("/velodyne_points",PointCloud2,self.lidar_cb)
 
         ## LeGo-loam
-        self.lidar_sub  = rospy.Subscriber("/filtered_pointcloud",PointCloud2,self.lidar_cb)
+        # self.lidar_sub  = rospy.Subscriber("/filtered_pointcloud",PointCloud2,self.lidar_cb)
 
         # Segmentation Information
         # self.seg_camera_sub  = rospy.Subscriber("/cm_segmentation",Image,self.seg_camera_cb)
@@ -32,7 +32,7 @@ class Convert:
         # self.odom_sub = rospy.Subscriber("/odom",Odometry, self.odom_cb) # odom is odom to base_link
 
         # RGB camera Information
-        # self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
+        self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
 
         # robot_pose txt
         # self.f = open("/home/kimm/pcd_img_data/txt/0413_txt.txt", 'w')
@@ -125,11 +125,11 @@ class Convert:
     def color_camera_cb(self, msg):
         # print("camera cb start")
         self.color_cv2_img = self.cv_br.imgmsg_to_cv2(msg,desired_encoding="bgr8")
-        # cv2.imwrite("/home/kimm/pcd_img_data/rgb_img/%s.png"% str(rospy.get_rostime()), self.color_cv2_img)
+        cv2.imwrite("/home/kimm/pcd_img_data/segmentation_data2/%s.png"% str(rospy.get_rostime()), self.color_cv2_img)
 
         
-        cv2.imshow("s",self.color_cv2_img)
-        cv2.waitKey(1)
+        # cv2.imshow("s",self.color_cv2_img)
+        # cv2.waitKey(1)
 
 
     def aa(self):
