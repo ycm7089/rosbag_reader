@@ -1,6 +1,6 @@
 import json
 import os.path as osp
-
+import os
 import PIL.Image
 from PIL import Image
 
@@ -9,8 +9,10 @@ from labelme import utils
 import cv2
 import numpy as np
 
-img_save_dir = '/home/kimm/map_save/'
-label_save_dir = img_save_dir + 'label/'
+img_dir = '/home/kimm/colorize_json_test'
+
+colirze_save_dir = img_dir + 'colorize/'
+label_save_dir = img_dir + 'label/'
 
 # 하나 하나 직접 하고싶을 때는 cnt를 input_key로 바꿔야 합니다!
 # print("input the json's number")
@@ -21,10 +23,11 @@ def main() :
     cnt = 0
 
     while True :
-        load_json_dir = ('/home/kimm/map_save/test.json')
+        load_json_dir = (img_dir + 'json/')
 
         if load_json_dir :
-            read_image = Image.open("/home/kimm/map_save/for_labeling.png").convert("L")
+            read_image = Image.open(img_dir + 'img/').convert("L")
+            color_image = Image.open(img_dir + 'img/').convert("RGB")
             
             data = json.load(open(load_json_dir))
 
@@ -45,7 +48,8 @@ def main() :
                 'vegetation':(107, 142, 35),
             }
 
-            img = np.array(read_image)        
+            img = np.array(read_image)    
+            colorize_img = np.array(color_image)    
             
             for shape in data["shapes"] :
                 label_name = shape["label"]
@@ -70,29 +74,38 @@ def main() :
                         if label_name in label_colormap:                   
                             if label_name == "unlabeled":
                                 cv2.fillPoly(img, color_points_numpy, color = [0])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
                             
                             if label_name == "road":
                                 cv2.fillPoly(img, color_points_numpy, color = [1])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
 
                             if label_name == "sidewalk":
                                 cv2.fillPoly(img, color_points_numpy, color = [2])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
 
                             if label_name == "building":
                                 cv2.fillPoly(img, color_points_numpy, color = [3])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
                                 
                             if label_name == "sky":
                                 cv2.fillPoly(img, color_points_numpy, color = [4])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
 
                             if label_name == "person":
                                 cv2.fillPoly(img, color_points_numpy, color = [5])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
 
                             if label_name == "car":
                                 cv2.fillPoly(img, color_points_numpy, color = [6])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
 
                             if label_name == "vegetation":
                                 cv2.fillPoly(img, color_points_numpy, color = [7])
+                                cv2.fillPoly(color_image, color_points_numpy, color = label_colormap[label_name])
                 
             PIL.Image.fromarray(img).save(osp.join(label_save_dir, "%6d.png"%cnt))   
+            PIL.Image.fromarray(color_image).save(osp.join(colirze_save_dir, "%6d.png"%cnt))  
             # ss = PIL.Image.open(osp.join(label_save_dir,"%6d.png" %cnt))
 
             print("Save img_%d Completed" %cnt)
