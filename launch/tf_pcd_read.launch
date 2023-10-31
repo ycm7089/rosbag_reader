@@ -1,0 +1,8 @@
+<launch>
+
+    <!--- TF -->
+    <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 6 0 0 0 /velodyne /velodyne2 10" />
+ 
+    <node pkg="pcd_maker" type="pcd_read_node"    name="pcd_read_node"    output="screen"/>
+
+</launch>

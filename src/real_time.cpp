@@ -127,12 +127,14 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
             // }
 
             cv::Vec3b rgb_val = img.at<cv::Vec3b>(v,u);
-            tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(255, 0, 0);
 
 
             point_rgb.r = rgb_val(2);
             point_rgb.g = rgb_val(1);
             point_rgb.b = rgb_val(0);
+            
+            // BGR
+            tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(cloud.points[i].b,cloud.points[i].g,cloud.points[i].r);
 
             output_cloud -> points.push_back(point_rgb);
         }
@@ -144,7 +146,7 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
 
     pcl::toROSMsg(*output_cloud, cloud_out);
     
-    cloud_out.header.frame_id = "velodyne";
+    cloud_out.header.frame_id = "map";
 
     cloud_out.header.stamp = ros::Time::now();
         
@@ -197,10 +199,11 @@ int main(int argc, char** argv)
     // camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
     
     // For jetson
-    camera_sub = nh.subscribe("/cm_segmentation", 1000, image_cb);
+    // camera_sub = nh.subscribe("/cm_segmentation", 1000, image_cb);
     // odom_sub = nh.subscribe("/odom", 1000, odom_cb);
     camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
-    lidar_sub = nh.subscribe("/velodyne_points", 1000, lidar_cb);
+    // lidar_sub = nh.subscribe("/velodyne_points", 1000, lidar_cb);
+    lidar_sub = nh.subscribe("/pcd_read_node/seg_pointcloud_pub",1000, lidar_cb);
     
     ros::spin();
 
