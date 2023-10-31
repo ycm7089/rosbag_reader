@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import os
 from sensor_msgs.msg import PointCloud2, Image, PointCloud
 import tf
 import rospy
@@ -13,6 +14,10 @@ import cv2
 from nav_msgs.msg import Odometry
 from cv_bridge import CvBridge, CvBridgeError
 
+save_dir = '/home/kimm/lidar_camera_calibration_data'
+lidar_save_dir = os.path.join(save_dir, 'pcd')
+camera_save_dir = os.path.join(save_dir, 'png')
+
 class Convert:
     def __init__(self):
         self.cv_br = CvBridge()
@@ -21,6 +26,10 @@ class Convert:
         self.robot_odom = Odometry()
         # self.lidar_points = PointCloud2()
         
+        # ouster lidar points
+        self.lidar_sub = rospy.Subscriber("/ouster/points", PointCloud2, self.lidar_cb)
+
+        # velodyne points
         # self.lidar_sub  = rospy.Subscriber("/velodyne_points",PointCloud2,self.lidar_cb)
 
         ## LeGo-loam
@@ -32,8 +41,10 @@ class Convert:
         # self.odom_sub = rospy.Subscriber("/odom",Odometry, self.odom_cb) # odom is odom to base_link
 
         # RGB camera Information
-        self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
-
+        # self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
+        
+        #stereo camera Information
+        self.color_camera_sub = rospy.Subscriber("/stereo/left/image_rect", Image, self.color_camera_cb)
         # robot_pose txt
         # self.f = open("/home/kimm/pcd_img_data/txt/0413_txt.txt", 'w')
         self.listener = tf.TransformListener()
@@ -58,15 +69,14 @@ class Convert:
         # print(self.robot_odom)
 
     def lidar_cb(self, msg):
-        print("1")
         self.lidar_points = pcl_helper.ros_to_pcl(msg)
         # print(rospy.get_rostime().secs, rospy.get_rostime().nsecs)
         # print(rospy.get_rostime())
 
         # pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/pcd/%s.pcd"% str(rospy.get_rostime()))\
-        pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/0502_trav_pcd/%d.pcd"% self.cnt)
-        print("2")
-        self.cnt+=1
+        # pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/0502_trav_pcd/%d.pcd"% self.cnt)
+        # print("2")
+        # self.cnt+=1
 
         ## robot_pose txt 
         # trans, rot = self.listener.lookupTransform('/map','/velodyne',rospy.Time(0))
@@ -125,12 +135,11 @@ class Convert:
     def color_camera_cb(self, msg):
         # print("camera cb start")
         self.color_cv2_img = self.cv_br.imgmsg_to_cv2(msg,desired_encoding="bgr8")
-        cv2.imwrite("/home/kimm/pcd_img_data/segmentation_data2/%s.png"% str(rospy.get_rostime()), self.color_cv2_img)
+        # cv2.imwrite("/home/kimm/pcd_img_data/segmentation_data2/%s.png"% str(rospy.get_rostime()), self.color_cv2_img)
 
         
         # cv2.imshow("s",self.color_cv2_img)
         # cv2.waitKey(1)
-
 
     def aa(self):
 
@@ -141,36 +150,30 @@ class Convert:
                 print("in2")
                 cv2.imwrite("/home/kimm/pcd_img_data/cm_pic/%d.png"% self.cnt, self.color_cv2_img)
                 self.cnt +=1
-
-
         
-        
-    
-    # def simultaneously_convert(self):
+    def simultaneously_convert(self):
 
-    #     num_iter = 1000
-    #     print("in save function")
+        num_iter = 15
+        print("in save function")
 
-    #     for i in range(num_iter):
-    #         # input_key = input()
-    #         print(i)
-    #         time.sleep(1)
-    #         # if input_key == "":
-    #             # pcl.save(self.lidar_points,"/home/cm/rosbag_file/output_pcd/%d.pcd"%i)
-    #             # cv2.imwrite("/home/cm/rosbag_file/output_pcd/%d.png" %i, self.cv2_img)
-    #         pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/new_pcd/%d.pcd"%i)
+        for i in range(num_iter):
+            input_key = input()
+            if input_key == "":
+                pcl.save(self.lidar_points,os.path.join(lidar_save_dir,"%d.pcd"%i))
+                cv2.imwrite(os.path.join(camera_save_dir,"%d.png" %i), self.color_cv2_img)
+            # pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/new_pcd/%d.pcd"%i)
             
-    #         # cv2.imwrite("/home/kimm/pcd_img_data/new_img/%d.png" %i, self.color_cv2_img)
-    #         cv2.imwrite("/home/kimm/pcd_img_data/new_seg_img/%d.png"%i, self.seg_cv2_img)
+            # cv2.imwrite("/home/kimm/pcd_img_data/new_img/%d.png" %i, self.color_cv2_img)
+            # cv2.imwrite("/home/kimm/pcd_img_data/new_seg_img/%d.png"%i, self.seg_cv2_img)
 
-    #         print("img, pcd %dth file saved" %i)
+            print("img, pcd %dth file saved" %i)
 
 def main():
     rospy.init_node("convert_node")
 
     test = Convert()
     
-    # test.aa()
+    test.simultaneously_convert()
     
     rospy.spin()
 

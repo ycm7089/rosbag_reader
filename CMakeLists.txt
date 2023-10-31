@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   pcl_ros
   pcl_conversions
-  livox_ros_driver
+  #livox_ros_driver
   roscpp
   cv_bridge
   sensor_msgs
@@ -144,9 +144,9 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(bag_to_pcd_node src/bag_to_pcd.cpp)
+#add_executable(bag_to_pcd_node src/bag_to_pcd.cpp)
 add_executable(bag_to_img_node src/bag_to_img.cpp)
-add_executable(pcl_node src/cm_pcl.cpp)
+#add_executable(pcl_node src/cm_pcl.cpp)
 add_executable(real_time_node src/real_time.cpp)
 add_executable(tf_pub_node src/tf_pub.cpp)
 add_executable(pcd_read_node src/pcd_read.cpp)
@@ -166,9 +166,9 @@ add_executable(cm_gicp_node src/cm_gicp_example.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(bag_to_pcd_node
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(bag_to_pcd_node
+#  ${catkin_LIBRARIES}
+#)
 target_link_libraries(pcd_txt_png_read_node
   ${catkin_LIBRARIES}
 )
@@ -179,9 +179,9 @@ target_link_libraries(tf_pub_node
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(pcl_node
-  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
-)
+#target_link_libraries(pcl_node
+#  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
+#)
 
 target_link_libraries(real_time_node
   ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES} pcl_visualization
