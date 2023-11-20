@@ -52,15 +52,18 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
     //                     0.9964, 0.0257, 0.0807, -0.0737,
     //                     0,0,0,1;
 
-    Extrinsic_matrix << 0.0, -1.0, 0.0, 0.1284,
-                        0.0,  0.0,-1.0, -0.063,
-                        1.0,  0.0, 0.0, -0.055,
-                        0,0,0,1;
-
-    // Extrinsic_matrix << 0.0346, -0.9933, -0.1102, 0.04,
-    //                     0.0773,  0.1126, -0.9906,-0.118,
-    //                     0.9964, 0.0257, 0.0807, -0.055,
+    // realsense_velodyne16
+    // Extrinsic_matrix << 0.0, -1.0, 0.0, 0.1284,
+    //                     0.0,  0.0,-1.0, -0.063,
+    //                     1.0,  0.0, 0.0, -0.055,
     //                     0,0,0,1;
+
+    // realsense_ouster32
+    Extrinsic_matrix << 
+    -0.00318,  -0.99992,  -0.01222,  0.04439,   
+    0.01545,   0.01217,   -0.99981,  -0.03315,  
+    0.99988,   -0.00336,  0.01541,   -0.09533,  
+    0.00000,   0.00000,   0.00000,   1.00000;
 
     float fx = 603.5733;
     float fy = 603.8386;
@@ -144,7 +147,7 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZRGB>& cloud, int data_num,cv::Mat im
 
     pcl::toROSMsg(*output_cloud, cloud_out);
     
-    cloud_out.header.frame_id = "velodyne";
+    cloud_out.header.frame_id = "os_sensor";
 
     cloud_out.header.stamp = ros::Time::now();
         
@@ -197,10 +200,12 @@ int main(int argc, char** argv)
     // camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
     
     // For jetson
-    camera_sub = nh.subscribe("/cm_segmentation", 1000, image_cb);
+    // camera_sub = nh.subscribe("/cm_segmentation", 1000, image_cb);
     // odom_sub = nh.subscribe("/odom", 1000, odom_cb);
     camera_sub = nh.subscribe("/camera/color/image_raw", 1000, image_cb);
-    lidar_sub = nh.subscribe("/velodyne_points", 1000, lidar_cb);
+    // lidar_sub = nh.subscribe("/velodyne_points", 1000, lidar_cb);
+    lidar_sub = nh.subscribe("/ouster/points", 1000, lidar_cb);
+
     
     ros::spin();
 

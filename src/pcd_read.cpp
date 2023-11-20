@@ -205,7 +205,7 @@ int main(int argc, char** argv)
         cloud_out.data.clear();
         std::cout << i << "th publish complete" << std::endl;
     }
-    ros::spinOnce();
+    ros::spin();
 
     return 0;
 }

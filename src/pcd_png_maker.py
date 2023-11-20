@@ -44,7 +44,7 @@ class Convert:
         # self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
         
         #stereo camera Information
-        self.color_camera_sub = rospy.Subscriber("/stereo/left/image_rect", Image, self.color_camera_cb)
+        self.color_camera_sub = rospy.Subscriber("/stereo/left/image_raw", Image, self.color_camera_cb)
         # robot_pose txt
         # self.f = open("/home/kimm/pcd_img_data/txt/0413_txt.txt", 'w')
         self.listener = tf.TransformListener()
