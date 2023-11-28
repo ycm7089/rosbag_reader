@@ -153,7 +153,7 @@ add_executable(pcd_read_node src/pcd_read.cpp)
 add_executable(pcd_txt_png_read_node src/pcd_txt_png_read.cpp)
 add_executable(loam_pcd_read_node src/legoloam_pcd_read.cpp)
 add_executable(cm_gicp_node src/cm_gicp_example.cpp)
-add_executable(intensity_pub src/timer_check.cpp)
+add_executable(ouster_node src/ranger_pub.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -199,8 +199,8 @@ target_link_libraries(loam_pcd_read_node
 target_link_libraries(cm_gicp_node
   ${catkin_LIBRARIES} ${PCL_LIBRARIES}
 )
-target_link_libraries(intensity_pub
-  ${catkin_LIBRARIES}
+target_link_libraries(ouster_node
+  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
 )
 
 #############

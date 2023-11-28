@@ -167,14 +167,28 @@ int main(int argc, char** argv)
                 seg_point_rgb.y = cloud.points[j].y;
                 seg_point_rgb.z = cloud.points[j].z;
                 
+                if(cloud.points[j].x > 14)  continue;
+
                 cv::Vec3b rgb_val = image.at<cv::Vec3b>(v,u);
-                
-                // rgb_val needs color check
+
+
+                // if(rgb_val(0)<10 && rgb_val(1) < 10 && rgb_val(2) < 10)
+                // {
+                //     seg_point_rgb.r = 155;
+                //     seg_point_rgb.g = 155;
+                //     seg_point_rgb.b = 155;
+                // }
+                // else {
+// rgb_val needs color check
                 seg_point_rgb.r = rgb_val(2);
                 seg_point_rgb.g = rgb_val(1);
                 seg_point_rgb.b = rgb_val(0);
 
+                // }
+
+                
                 seg_output_cloud -> points.push_back(seg_point_rgb);   
+                output_cloud -> points.push_back(cloud.points[j]);
             }
         }
 
@@ -188,10 +202,10 @@ int main(int argc, char** argv)
         
         seg_output_cloud -> clear();
         
-        for (const auto& point_rgb: cloud)
-        {
-            output_cloud -> points.push_back(point_rgb);
-        }
+        // for (const auto& point_rgb: cloud)
+        // {
+        //     if (is_in_img(480,640)) output_cloud -> points.push_back(point_rgb);
+        // }
 
         pcl::toROSMsg(*output_cloud, cloud_out);
         
