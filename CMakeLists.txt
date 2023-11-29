@@ -154,6 +154,7 @@ add_executable(pcd_txt_png_read_node src/pcd_txt_png_read.cpp)
 add_executable(loam_pcd_read_node src/legoloam_pcd_read.cpp)
 add_executable(cm_gicp_node src/cm_gicp_example.cpp)
 add_executable(ouster_node src/ranger_pub.cpp)
+add_executable(ranger_pcd_read_node src/ranger_pcd_read.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -189,6 +190,10 @@ target_link_libraries(real_time_node
 )
 
 target_link_libraries(pcd_read_node
+  ${catkin_LIBRARIES} ${PCL_LIBRARIES}
+)
+
+target_link_libraries(ranger_pcd_read_node
   ${catkin_LIBRARIES} ${PCL_LIBRARIES}
 )
 
