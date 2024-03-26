@@ -8,7 +8,7 @@ from nav_msgs.msg import Odometry
 print("A")
 
 read_bag = rosbag.Bag('/home/cm/rosbag_data/0315ranger_2.bag', 'r')
-write_bag = rosbag.Bag('/home/cm/rosbag_data/new_0315ranger_2.bag', 'w')
+write_bag = rosbag.Bag('/home/cm/rosbag_data/new_new_0315ranger_2.bag', 'w')
 
 print("B")
 
@@ -17,26 +17,29 @@ for topic, msg, time in read_bag.read_messages(topics=['/ouster/points','/ouster
     if topic == '/ouster/points' :
         pc2 = PointCloud2()
         pc2 = msg
+        msg.header.frame_id = "jackal1/base_link"
 
-        write_bag.write('/ranger1/ouster/points', pc2, time)
+        write_bag.write('/jackal1/ouster/points', pc2, time)
     
     if topic == '/ouster/imu' :
         oimu = Imu()
         oimu = msg
         
-        write_bag.write('/ranger1/ouster/imu', oimu, time)
+        write_bag.write('/jackal1/ouster/imu', oimu, time)
     
     if topic == '/ranger_base_node/odom' :
         odom = Odometry()
         odom = msg
 
-        write_bag.write('/ranger1/ranger_base_node/odom', odom, time)
+        write_bag.write('/jackal1/ranger_base_node/odom', odom, time)
     
     if topic == '/maked_ouster_scan' :
         lscan = LaserScan()
         lscan = msg
         
-        write_bag.write('/ranger1/maked_ouster_scan', lscan, time)
+        write_bag.write('/jackal1/maked_ouster_scan', lscan, time)
 
 read_bag.close()
 write_bag.close()
+
+
