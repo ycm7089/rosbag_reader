@@ -73,7 +73,7 @@ class Convert:
         # print(rospy.get_rostime().secs, rospy.get_rostime().nsecs)
         # print(rospy.get_rostime())
 
-        # pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/pcd/%s.pcd"% str(rospy.get_rostime()))\
+        pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/pcd/%s.pcd"% str(rospy.get_rostime()))\
         # pcl.save(self.lidar_points,"/home/kimm/pcd_img_data/0502_trav_pcd/%d.pcd"% self.cnt)
         # print("2")
         # self.cnt+=1
