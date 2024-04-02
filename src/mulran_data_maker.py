@@ -17,8 +17,8 @@ import pcl_helper
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 
-save_dir = '/home/cm/cm_mulran'
-lidar_save_dir = os.path.join(save_dir, 'pcd')
+save_dir = '/home/kimm/cm_mulran'
+lidar_save_dir = os.path.join(save_dir, 'pcd/')
 camera_save_dir = os.path.join(save_dir, 'png/')
 
 class Convert:
@@ -30,10 +30,15 @@ class Convert:
 
         self.csv_lst = []
         self.ck = False        
-        # ouster lidar points
-        # self.lidar_sub = rospy.Subscriber("/ouster/points", PointCloud2, self.lidar_cb)
+        # Fast-LIO lidar points
+        # self.lidar_sub = rospy.Subscriber("/cloud_registered", PointCloud2, self.lidar_cb)
+        self.lidar_sub = rospy.Subscriber("/ouster/points", PointCloud2, self.lidar_cb)
+
         
-        # self.odom_sub = rospy.Subscriber("/ranger_base_node/odom",Odometry, self.odom_cb) # odom is odom to base_link
+        # FAST-LIO Odometry
+        # self.odom_sub = rospy.Subscriber("/Odometry",Odometry, self.odom_cb) # odom is odom to base_link
+        self.odom_sub = rospy.Subscriber("/ranger_base_node/odom",Odometry, self.odom_cb) # odom is odom to base_link
+
 
         # RGB camera Information
         self.color_camera_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.color_camera_cb)
@@ -41,8 +46,9 @@ class Convert:
     def odom_cb(self, msg):
         
         self.csv_lst.append([str(rospy.get_rostime()),msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z, msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w])
+        
         if not self.ck :
-            self.txt_file = open("/home/cm/cm_mulran/odom_txt.txt", 'w')
+            self.txt_file = open("/home/kimm/cm_mulran/odom_txt.txt", 'w')
             self.ck = True
         else :
         # with open(save_dir + "/" + "odom_txt.txt", 'w') as txt_file :

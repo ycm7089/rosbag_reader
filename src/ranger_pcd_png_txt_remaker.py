@@ -14,9 +14,9 @@ data_num = 5665
 def main():
     rospy.init_node("pcd_png_txt_convert_node")
 
-    pcd_path = '/home/kimm/new_ranger/pcd/'
-    rgb_path = '/home/kimm/new_ranger/SEGimg/'
-    # seg_path = '/home/kimm/new_ranger/SEGimg/'
+    pcd_path = '/home/kimm/new_ranger5/pcd/'
+    # rgb_path = '/home/kimm/new_ranger5/img/'
+    rgb_path = '/home/kimm/new_ranger5/SEGimg/'
 
     rostime = []
     pose_x = []
@@ -27,7 +27,7 @@ def main():
     orient_z = []
     orient_w = [] 
     
-    with open("/home/kimm/new_ranger/txt/fastlio_txt.txt") as ff:
+    with open("/home/kimm/new_ranger5/txt/fastlio_txt.txt") as ff:
         for line in ff:
             ttime,x,y,z,xx,yy,zz,ww = line.split()
             ttime = str(ttime)
@@ -58,7 +58,7 @@ def main():
     split_pcd_flist = []
     split_rgb_flist = []
     
-    re_f = open("/home/kimm/new_ranger/txt/new_fastlio_txt.txt", 'w')
+    re_f = open("/home/kimm/new_ranger5/txt/new_fastlio_txt.txt", 'w')
     
     for i in range(len(pcd_flist)):
 
@@ -99,8 +99,8 @@ def main():
         src1 = pcd_path + str(split_pcd_flist[i]) + '.pcd' 
         src2 = rgb_path + str(split_rgb_flist[min_idx]) + '.png'
         
-        dst1 = '/home/kimm/new_ranger/for_rviz_pcd/' + '%d.pcd' % i
-        dst2 = '/home/kimm/new_ranger/for_rviz_segimg/' + '%d.png' % i
+        dst1 = '/home/kimm/new_ranger5/for_rviz_pcd/' + '%d.pcd' % i
+        dst2 = '/home/kimm/new_ranger5/for_rviz_segimg/' + '%d.png' % i
 
         shutil.copy2(src1,dst1)
         shutil.copy2(src2,dst2)

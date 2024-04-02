@@ -82,12 +82,12 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZI>& cloud, int data_num,cv::Mat img,
     }
 
     cout <<"==================================" << endl;
-    // cv::Mat tmp;
-    // img.copyTo(tmp);
+    cv::Mat tmp;
+    img.copyTo(tmp);
 
     for(int i = 0; i < data_num; i ++)
     {
-        if (cloud.points[i].x < 0.25)   continue; 
+        // if (cloud.points[i].x < 0.25)   continue; 
 
         xyz_result[0] = KE_Matrix(0,0) * cloud.points[i].x +
                         KE_Matrix(0,1) * cloud.points[i].y +
@@ -121,14 +121,18 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZI>& cloud, int data_num,cv::Mat img,
             point_rgb.b = rgb_val(0);
 
             // tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(cloud.points[i].intensity);
-            // tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(point_rgb.x,point_rgb.y,point_rgb.z);
+            tmp.at<cv::Vec3b>(v,u) = cv::Vec3b(255.0,255.0,255.0);
 
             output_cloud -> points.push_back(point_rgb);
         }
     }
+
+    // pcl::visualization::CloudViewer viewer2("Cloud Viewer");
+    // viewer2.showCloud(output_cloud, "src_red");
+
     // cv::namedWindow("tmp");
     // cv::imshow("tmp", tmp);
-    // cv::waitKey(1);
+    // cv::waitKey(0);
     pcl::toROSMsg(*output_cloud, cloud_out);
     
     cloud_out.header.frame_id = "body";
@@ -139,21 +143,23 @@ void cm_matrix(pcl::PointCloud<pcl::PointXYZI>& cloud, int data_num,cv::Mat img,
     lidar_pub.publish(cloud_out);  
     output_cloud -> clear(); 
     cloud_out.data.clear();
-    lidar_pub.publish(cloud_out);   
+    // lidar_pub.publish(cloud_out);   
 }
 void odom_cb(const nav_msgs::Odometry::ConstPtr& msg)
 {
-    odom.pose.pose.position.x  = msg -> pose.pose.position.x;
-    odom.pose.pose.position.y  = msg -> pose.pose.position.y;
-    odom.pose.pose.position.z  = msg -> pose.pose.position.z;
+    // odom.pose.pose.position.x  = msg -> pose.pose.position.x;
+    // odom.pose.pose.position.y  = msg -> pose.pose.position.y;
+    // odom.pose.pose.position.z  = msg -> pose.pose.position.z;
 
-    odom.pose.pose.orientation.x  = msg -> pose.pose.orientation.x;
-    odom.pose.pose.orientation.y  = msg -> pose.pose.orientation.y;
-    odom.pose.pose.orientation.z  = msg -> pose.pose.orientation.z;
-    odom.pose.pose.orientation.w  = msg -> pose.pose.orientation.w;
+    // odom.pose.pose.orientation.x  = msg -> pose.pose.orientation.x;
+    // odom.pose.pose.orientation.y  = msg -> pose.pose.orientation.y;
+    // odom.pose.pose.orientation.z  = msg -> pose.pose.orientation.z;
+    // odom.pose.pose.orientation.w  = msg -> pose.pose.orientation.w;
 
-    tf::TransformBroadcaster br;
-    tf::Transform transform;
+    odom.header.stamp = msg -> header.stamp;
+
+    // tf::TransformBroadcaster br;
+    // tf::Transform transform;
     // transform.setOrigin(tf::Vector3(msg -> pose.pose.position.x,msg -> pose.pose.position.y,msg -> pose.pose.position.z));
     // transform.setRotation(tf::Quaternion(msg -> pose.pose.orientation.x,msg -> pose.pose.orientation.y,msg -> pose.pose.orientation.z,msg -> pose.pose.orientation.w));
     // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "body", "os_sensor"));
@@ -169,13 +175,14 @@ void ouster_cb(const sensor_msgs::PointCloud2::ConstPtr& msg )
 
     nav_msgs::Odometry cm_odom;
 
-    cm_odom.pose.pose.position.x = odom.pose.pose.position.x;
-    cm_odom.pose.pose.position.y = odom.pose.pose.position.y;
-    cm_odom.pose.pose.position.z = odom.pose.pose.position.z;
-    cm_odom.pose.pose.orientation.x = odom.pose.pose.orientation.x;
-    cm_odom.pose.pose.orientation.y = odom.pose.pose.orientation.y;
-    cm_odom.pose.pose.orientation.z = odom.pose.pose.orientation.z;
-    cm_odom.pose.pose.orientation.w = odom.pose.pose.orientation.w;
+    // cm_odom.pose.pose.position.x = odom.pose.pose.position.x;
+    // cm_odom.pose.pose.position.y = odom.pose.pose.position.y;
+    // cm_odom.pose.pose.position.z = odom.pose.pose.position.z;
+    // cm_odom.pose.pose.orientation.x = odom.pose.pose.orientation.x;
+    // cm_odom.pose.pose.orientation.y = odom.pose.pose.orientation.y;
+    // cm_odom.pose.pose.orientation.z = odom.pose.pose.orientation.z;
+    // cm_odom.pose.pose.orientation.w = odom.pose.pose.orientation.w;
+    cm_odom.header.stamp = odom.header.stamp;
     
     cm_matrix( *new_ouster_cloud, new_ouster_cloud->size(), copy_image, cm_odom );
     new_ouster_cloud->clear();
@@ -186,7 +193,7 @@ void ouster_cb(const sensor_msgs::PointCloud2::ConstPtr& msg )
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "ouster_node");
+    ros::init(argc, argv, "ranger_rgb_node");
 
     ros::NodeHandle nh("~");
 

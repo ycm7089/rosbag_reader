@@ -79,7 +79,7 @@ int main(int argc, char** argv)
         KE_Matrix(2,j) = Extrinsic_matrix(2,j);
     }
 
-    int num_pcd = 5667;
+    int num_pcd = 0;
 
     FILE* file;
     file = fopen("/home/kimm/pcd_img_data/txt/re_0413_txt.txt","r");
@@ -87,9 +87,12 @@ int main(int argc, char** argv)
     string rostime;
     float pose_x,pose_y,pose_z,orien_x,orien_y,orien_z,orien_w;
     
+    pcl::io::loadPCDFile<pcl::PointXYZRGB> ("/home/kimm/ranger_ws/src/FAST-LOCALIZATION/map/pcd/global_pcd_merge.pcd", cloud); //* load the file
+
     for(int i = 0; i < num_pcd; i ++)
     {
         pcl::io::loadPCDFile<pcl::PointXYZRGB> ("/home/kimm/pcd_img_data/resaved_pcd/" + std::to_string(i) + ".pcd", cloud); //* load the file
+
         // cv::Mat image = cv::imread("/home/kimm/pcd_img_data/resaved_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);
         
         cv::Mat image = cv::imread("/home/kimm/pcd_img_data/seg_img/" + std::to_string(i) + ".png",cv::IMREAD_COLOR);

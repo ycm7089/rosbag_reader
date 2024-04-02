@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   nav_msgs
   # pcl_helper
+  image_transport
 )
 
 find_package(pcl_visualization)
@@ -153,7 +154,7 @@ add_executable(pcd_read_node src/pcd_read.cpp)
 add_executable(pcd_txt_png_read_node src/pcd_txt_png_read.cpp)
 add_executable(loam_pcd_read_node src/legoloam_pcd_read.cpp)
 add_executable(cm_gicp_node src/cm_gicp_example.cpp)
-add_executable(ouster_node src/ranger_pub.cpp)
+add_executable(ranger_rgb_node src/ranger_pub.cpp)
 add_executable(ranger_pcd_read_node src/ranger_pcd_read.cpp)
 
 
@@ -194,7 +195,7 @@ target_link_libraries(pcd_read_node
 )
 
 target_link_libraries(ranger_pcd_read_node
-  ${catkin_LIBRARIES} ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES} ${PCL_LIBRARIES} pcl_visualization
 )
 
 target_link_libraries(loam_pcd_read_node
@@ -204,8 +205,8 @@ target_link_libraries(loam_pcd_read_node
 target_link_libraries(cm_gicp_node
   ${catkin_LIBRARIES} ${PCL_LIBRARIES}
 )
-target_link_libraries(ouster_node
-  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES}
+target_link_libraries(ranger_rgb_node
+  ${catkin_LIBRARIES} ${OpenCV_INCLUDE_DIRS} ${PCL_LIBRARIES} pcl_visualization
 )
 
 #############

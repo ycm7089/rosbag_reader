@@ -1,0 +1,8 @@
+<launch>
+
+
+<node pkg="rosbag" type="play" name="player" output="screen" args="--clock /home/kimm/ranger_for_ltmapper2.bag"/>
+
+<node pkg="pcd_maker" type="ranger_pcd_read_node"    name="ranger_pcd_read_node"    output="screen"/>
+
+</launch>
